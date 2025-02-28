@@ -16,17 +16,15 @@ type TaskFormValues = {
 export type TaskModalProps = {
   isOpen: boolean
   onClose: () => void
-  taskText: string
-  setTaskText: (text: string) => void
-  onSave: () => void
+  initialTaskText: string
+  onSave: (text: string) => void
   isEditing: boolean
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   onClose,
-  taskText,
-  setTaskText,
+  initialTaskText,
   onSave,
   isEditing,
 }) => {
@@ -37,25 +35,21 @@ const TaskModal: React.FC<TaskModalProps> = ({
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { taskText },
+    defaultValues: { taskText: '' }, // Initialize with empty text
     mode: 'onChange',
   })
 
+  // Reset form values whenever modal opens or editing state changes
   useEffect(() => {
-    if (isEditing) {
-      reset({ taskText })
-    }
-  }, [isEditing, taskText, reset])
+    reset({ taskText: initialTaskText })
+  }, [isOpen, initialTaskText, reset])
 
   const onSubmit = (data: TaskFormValues) => {
-    setTaskText(data.taskText)
-    onSave()
-    if (!isEditing) {
-      reset()
-    }
+    onSave(data.taskText)
   }
 
   if (!isOpen) return null
+
   return (
     <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded shadow-md w-96">
@@ -67,8 +61,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
             {...register('taskText')}
             placeholder="Enter task..."
             rows={4}
-            value={taskText}
-            onChange={(e) => setTaskText(e.target.value)}
           />
           {errors.taskText && (
             <p className="text-red-500 text-sm mt-1">

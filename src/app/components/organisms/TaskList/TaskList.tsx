@@ -1,12 +1,24 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import TaskItem from '@/app/components/molecules/TaskItem'
 
+type Task = {
+  id: string
+  text: string
+  completed: boolean
+  deleted: boolean
+}
+
 type TaskListProps = {
-  tasks: { id: string; text: string; completed: boolean; deleted: boolean }[]
+  tasks: Task[]
   toggleCompletion: (id: string) => void
   deleteTask: (id: string) => void
   editTask: (task: { id: string; text: string }) => void
 }
+const NoTasksMessage: React.FC = () => (
+  <p className="flex justify-center w-full p-4" aria-live="polite">
+    No tasks available
+  </p>
+)
 
 const TaskList: React.FC<TaskListProps> = ({
   tasks,
@@ -14,21 +26,23 @@ const TaskList: React.FC<TaskListProps> = ({
   deleteTask,
   editTask,
 }) => {
+  const renderedTasks = useMemo(
+    () =>
+      tasks.map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          toggleCompletion={toggleCompletion}
+          deleteTask={deleteTask}
+          openEditModal={editTask}
+        />
+      )),
+    [tasks, toggleCompletion, deleteTask, editTask],
+  )
+
   return (
     <div className="gap-4">
-      {tasks.length === 0 ? (
-        <p className="flex justify-center w-full p-4">No tasks available</p>
-      ) : (
-        tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            toggleCompletion={toggleCompletion}
-            deleteTask={deleteTask}
-            openEditModal={editTask}
-          />
-        ))
-      )}
+      {tasks.length === 0 ? <NoTasksMessage /> : renderedTasks}
     </div>
   )
 }

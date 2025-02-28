@@ -6,176 +6,100 @@ import TaskList from '@/app/components/organisms/TaskList'
 import TaskModal from '@/app/components/molecules/TaskModal'
 import CustomPagination from '@/app/components/molecules/Pagination'
 
+const TASKS_PER_PAGE = 3
+
 const TaskPage = () => {
-  const tasks = useStore(
-    (state: {
-      todos: {
-        id: string
-        text: string
-        completed: boolean
-        deleted: boolean
-      }[]
-    }) => state.todos,
-  )
-  const addTask = useStore(
-    (state: {
-      addTask: (task: {
-        id: string
-        text: string
-        completed: boolean
-        deleted: boolean
-      }) => void
-    }) => state.addTask,
-  )
-  const updateTask = useStore(
-    (state: { updateTask: (task: { id: string; text: string }) => void }) =>
-      state.updateTask,
-  )
-  const deleteTask = useStore(
-    (state: { deleteTask: (id: string) => void }) => state.deleteTask,
-  )
-  const toggleTaskCompletion = useStore(
-    (state: { toggleTaskCompletion: (id: string) => void }) =>
-      state.toggleTaskCompletion,
-  )
+  const tasks = useStore((state) => state.todos)
+  const addTask = useStore((state) => state.addTask)
+  const updateTask = useStore((state) => state.updateTask)
+  const deleteTask = useStore((state) => state.deleteTask)
+  const toggleTaskCompletion = useStore((state) => state.toggleTaskCompletion)
 
   const [isModalOpen, setModalOpen] = useState(false)
-  const [taskText, setTaskText] = useState('')
-  const [editingTask, setEditingTask] = useState<{
+  const [currentTask, setCurrentTask] = useState<{
     id: string
     text: string
   } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const tasksPerPage = 3
 
-  const handleAddTask = useCallback(() => {
-    setEditingTask(null)
-    setTaskText('')
-    setModalOpen(true)
-  }, [])
-
-  const handleSaveTask = useCallback(() => {
-    if (editingTask) {
-      updateTask({ ...editingTask, text: taskText })
-      setEditingTask(null)
-    } else {
-      addTask({
-        id: Date.now().toString(),
-        text: taskText,
-        completed: false,
-        deleted: false,
-      })
-      setTaskText('') // Reset taskText after adding a new task
-    }
-    setModalOpen(false)
-  }, [editingTask, taskText, addTask, updateTask])
-
-  const handleToggleCompletion = useCallback(
-    (id: string) => {
-      toggleTaskCompletion(id)
+  const handleOpenModal = useCallback(
+    (task: { id: string; text: string } | null = null) => {
+      setCurrentTask(task)
+      setModalOpen(true)
     },
-    [toggleTaskCompletion],
+    [],
   )
 
-  const handleDeleteTask = useCallback(
-    (id: string) => {
-      deleteTask(id)
+  const handleSaveTask = useCallback(
+    (taskText: string) => {
+      if (currentTask) {
+        updateTask({ id: currentTask.id, text: taskText })
+      } else {
+        addTask({
+          id: Date.now().toString(),
+          text: taskText,
+          completed: false,
+          deleted: false,
+        })
+      }
+      setModalOpen(false)
     },
-    [deleteTask],
+    [currentTask, addTask, updateTask],
   )
 
-  const handleEditTask = useCallback((task: { id: string; text: string }) => {
-    setEditingTask(task)
-    setTaskText(task.text)
-    setModalOpen(true)
-  }, [])
-
-  const handlePrevPage = useCallback(() => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1)
-    }
-  }, [currentPage])
-
-  const handleNextPage = useCallback(() => {
-    if (currentPage < Math.ceil(tasks.length / tasksPerPage)) {
-      setCurrentPage(currentPage + 1)
-    }
-  }, [currentPage, tasks.length])
+  const getFilteredTasks = useMemo(() => {
+    return tasks.filter((task: { deleted: boolean }) => !task.deleted)
+  }, [tasks])
 
   const currentTasks = useMemo(() => {
-    const indexOfLastTask = currentPage * tasksPerPage
-    const indexOfFirstTask = indexOfLastTask - tasksPerPage
-    return tasks
-      .filter(
-        (task: {
-          id: string
-          text: string
-          completed: boolean
-          deleted: boolean
-        }) => !task.deleted,
-      )
-      .slice(indexOfFirstTask, indexOfLastTask)
-  }, [currentPage, tasks, tasksPerPage])
+    const startIndex = (currentPage - 1) * TASKS_PER_PAGE
+    return getFilteredTasks.slice(startIndex, startIndex + TASKS_PER_PAGE)
+  }, [currentPage, getFilteredTasks])
 
-  const deletedCount = useMemo(() => {
-    return tasks.filter(
-      (task: {
-        id: string
-        text: string
-        completed: boolean
-        deleted: boolean
-      }) => task.deleted,
-    ).length
-  }, [tasks])
+  const deletedCount = useMemo(
+    () => tasks.filter((task: { deleted: boolean }) => task.deleted).length,
+    [tasks],
+  )
 
   return (
     <div className="container mx-auto p-4">
       <Header
-        addTask={handleAddTask}
+        addTask={() => handleOpenModal(null)}
         uncompletedCount={
           tasks.filter(
-            (t: {
-              id: string
-              text: string
-              completed: boolean
-              deleted: boolean
-            }) => !t.completed && !t.deleted,
+            (t: { completed: boolean; deleted: boolean }) =>
+              !t.completed && !t.deleted,
           ).length
         }
         completedCount={
-          tasks.filter(
-            (t: {
-              id: string
-              text: string
-              completed: boolean
-              deleted: boolean
-            }) => t.completed,
-          ).length
+          tasks.filter((t: { completed: boolean }) => t.completed).length
         }
         deletedCount={deletedCount}
       />
       <TaskList
         tasks={currentTasks}
-        toggleCompletion={handleToggleCompletion}
-        deleteTask={handleDeleteTask}
-        editTask={(task) => handleEditTask(task)}
+        toggleCompletion={toggleTaskCompletion}
+        deleteTask={deleteTask}
+        editTask={handleOpenModal}
       />
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setModalOpen(false)
-          setTaskText('')
-        }}
-        taskText={taskText}
-        setTaskText={setTaskText}
+        onClose={() => setModalOpen(false)}
+        initialTaskText={currentTask?.text || ''}
         onSave={handleSaveTask}
-        isEditing={!!editingTask}
+        isEditing={!!currentTask}
       />
       <CustomPagination
         current={currentPage - 1}
-        totalPages={Math.ceil(tasks.length / tasksPerPage)}
-        onPrev={handlePrevPage}
-        onNext={handleNextPage}
+        totalPages={Math.ceil(getFilteredTasks.length / TASKS_PER_PAGE)}
+        onPrev={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        onNext={() =>
+          setCurrentPage((prev) =>
+            prev < Math.ceil(getFilteredTasks.length / TASKS_PER_PAGE)
+              ? prev + 1
+              : prev,
+          )
+        }
       />
     </div>
   )
