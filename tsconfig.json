@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.config.js",
-    "jest.setup.js"
+    "jest.setup.js",
+    "src/app/api/tasks.js"
   ],
   "exclude": ["node_modules"]
 }

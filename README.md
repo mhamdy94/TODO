@@ -21,8 +21,8 @@ This project is a Next.js application fully configured with TypeScript and essen
 ### 1️⃣ **Clone the Repository**
 
 ```sh
-git clone https://github.com/your-repo/my-next-app.git
-cd my-next-app
+git clone https://github.com/mhamdy94/TODO.git
+cd TODO
 ```
 
 ### 2️⃣ **Install Dependencies**
