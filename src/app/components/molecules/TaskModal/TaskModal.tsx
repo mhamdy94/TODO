@@ -35,11 +35,10 @@ const TaskModal: React.FC<TaskModalProps> = ({
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { taskText: '' }, // Initialize with empty text
+    defaultValues: { taskText: '' },
     mode: 'onChange',
   })
 
-  // Reset form values whenever modal opens or editing state changes
   useEffect(() => {
     reset({ taskText: initialTaskText })
   }, [isOpen, initialTaskText, reset])
