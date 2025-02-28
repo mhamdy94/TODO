@@ -15,16 +15,20 @@ const TaskList: React.FC<TaskListProps> = ({
   editTask,
 }) => {
   return (
-    <div className="space-y-4">
-      {tasks.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          toggleCompletion={toggleCompletion}
-          deleteTask={deleteTask}
-          openEditModal={(task) => editTask({ id: task.id, text: task.text })}
-        />
-      ))}
+    <div className="gap-4">
+      {tasks.length === 0 ? (
+        <p className="flex justify-center w-full p-4">No tasks available</p>
+      ) : (
+        tasks.map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            toggleCompletion={toggleCompletion}
+            deleteTask={deleteTask}
+            openEditModal={editTask}
+          />
+        ))
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from '@/app/components/atoms/Button'
-import Checkbox from '../../atoms/CheckBox'
+import Checkbox from '@/app/components/atoms/CheckBox'
 
 type TaskItemProps = {
   task: {

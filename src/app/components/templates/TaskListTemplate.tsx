@@ -65,8 +65,8 @@ const TaskPage = () => {
         completed: false,
         deleted: false,
       })
+      setTaskText('') // Reset taskText after adding a new task
     }
-    setTaskText('')
     setModalOpen(false)
   }, [editingTask, taskText, addTask, updateTask])
 
@@ -117,6 +117,17 @@ const TaskPage = () => {
       .slice(indexOfFirstTask, indexOfLastTask)
   }, [currentPage, tasks, tasksPerPage])
 
+  const deletedCount = useMemo(() => {
+    return tasks.filter(
+      (task: {
+        id: string
+        text: string
+        completed: boolean
+        deleted: boolean
+      }) => task.deleted,
+    ).length
+  }, [tasks])
+
   return (
     <div className="container mx-auto p-4">
       <Header
@@ -141,16 +152,7 @@ const TaskPage = () => {
             }) => t.completed,
           ).length
         }
-        deletedCount={
-          tasks.filter(
-            (t: {
-              id: string
-              text: string
-              completed: boolean
-              deleted: boolean
-            }) => t.deleted,
-          ).length
-        }
+        deletedCount={deletedCount}
       />
       <TaskList
         tasks={currentTasks}
@@ -160,7 +162,10 @@ const TaskPage = () => {
       />
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false)
+          setTaskText('')
+        }}
         taskText={taskText}
         setTaskText={setTaskText}
         onSave={handleSaveTask}
