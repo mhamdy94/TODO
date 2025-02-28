@@ -51,7 +51,11 @@ const TaskModal: React.FC<TaskModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 backdrop-sepia-50 bg-opacity-75 flex items-center justify-center"
+      aria-modal="true"
+      role="dialog"
+    >
       <div className="bg-white p-6 rounded shadow-md w-96">
         <h2 className="text-lg font-bold mb-4">
           {isEditing ? 'Edit Task' : 'Add Task'}
