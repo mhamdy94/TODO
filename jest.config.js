@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transform: {
-    '^.+\\.[t|j]sx?$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: ['/node_modules/'],
   moduleNameMapper: {
