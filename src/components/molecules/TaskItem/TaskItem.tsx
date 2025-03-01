@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import Button from '@/app/components/atoms/Button'
-import Checkbox from '@/app/components/atoms/CheckBox'
+import Button from '@/components/atoms/Button'
+import Checkbox from '@/components/atoms/CheckBox'
 
 type Task = {
   id: string

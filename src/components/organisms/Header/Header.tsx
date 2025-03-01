@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import Button from '@/app/components/atoms/Button'
+import Button from '@/components/atoms/Button'
 
 type HeaderProps = {
   addTask: () => void

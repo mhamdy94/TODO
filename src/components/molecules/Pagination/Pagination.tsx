@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useCallback } from 'react'
-import Button from '@/app/components/atoms/Button'
+import Button from '@/components/atoms/Button'
 
 type CustomPaginationProps = {
   current: number

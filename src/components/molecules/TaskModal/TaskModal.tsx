@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import TextArea from '@/app/components/atoms/TextArea'
-import Button from '@/app/components/atoms/Button'
+import TextArea from '@/components/atoms/TextArea'
+import Button from '@/components/atoms/Button'
 
 const schema = z.object({
   taskText: z.string().min(1, 'Task text is required'),

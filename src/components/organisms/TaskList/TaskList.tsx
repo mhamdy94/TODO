@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import TaskItem from '@/app/components/molecules/TaskItem'
+import TaskItem from '@/components/molecules/TaskItem'
 
 type Task = {
   id: string

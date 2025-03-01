@@ -1,10 +1,10 @@
 'use client'
 import React, { useState, useCallback, useMemo } from 'react'
 import useStore from '@/store/store'
-import Header from '@/app/components/organisms/Header'
-import TaskList from '@/app/components/organisms/TaskList'
-import TaskModal from '@/app/components/molecules/TaskModal'
-import CustomPagination from '@/app/components/molecules/Pagination'
+import Header from '@/components/organisms/Header'
+import TaskList from '@/components/organisms/TaskList'
+import TaskModal from '@/components/molecules/TaskModal'
+import CustomPagination from '@/components/molecules/Pagination'
 
 const TASKS_PER_PAGE = 3
 
